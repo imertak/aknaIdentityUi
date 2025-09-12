@@ -1,8 +1,5 @@
 import 'package:akna_ui/emailVerificationScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'models/user_type.dart';
-import 'providers/user_data_provider.dart';
 
 void main() {
   runApp(AknaApp());
@@ -96,7 +93,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 children: [
                   SizedBox(height: 20),
 
-                  // Animated Logo ve araç görseli
+                  // Animated Logo ve araç görseliii
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: SlideTransition(
@@ -535,17 +532,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Set user data in provider
-                    Provider.of<UserDataProvider>(
-                      context,
-                      listen: false,
-                    ).setUserData(
-                      _emailController.text,
-                      UserType.carrier,
-                    ); // Default to carrier
-
-                    // Navigate to main screen
-                    Navigator.pushReplacementNamed(context, '/main');
+                    // Login logic here
+                    print('Login: ${_emailController.text}');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFCEFF00),
