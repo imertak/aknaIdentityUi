@@ -93,7 +93,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 children: [
                   SizedBox(height: 20),
 
-                  // Animated Logo ve araç görseli
+                  // Animated Logo ve araç görseliii
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: SlideTransition(
