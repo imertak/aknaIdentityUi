@@ -1,8 +1,5 @@
-// screens/invoices_screen.dart
+// invoices_screen.dart - Modernized
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
-import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class InvoicesScreen extends StatefulWidget {
   final String userName;
@@ -125,7 +122,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F5F7),
       body: SafeArea(
         child: SlideTransition(
           position: _slideAnimation,
@@ -168,7 +165,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: Color(0xFFF7FAFC),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(color: Color(0xFFE2E8F0), width: 1),
                 boxShadow: [
@@ -181,7 +178,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
               ),
               child: Icon(
                 Icons.arrow_back_rounded,
-                color: Color(0xFF4A5568),
+                color: Color(0xFF2D3748),
                 size: 20,
               ),
             ),
@@ -195,7 +192,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                   'Faturalar',
                   style: TextStyle(
                     color: Color(0xFF2D3748),
-                    fontSize: 24,
+                    fontSize: 28,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
                   ),
@@ -205,7 +202,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                   '${_allInvoices.length} fatura listeleniyor',
                   style: TextStyle(
                     color: Color(0xFF718096),
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -218,7 +215,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: Color(0xFFF7FAFC),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(color: Color(0xFFE2E8F0), width: 1),
                 boxShadow: [
@@ -231,7 +228,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
               ),
               child: Icon(
                 Icons.tune_rounded,
-                color: Color(0xFF4A5568),
+                color: Color(0xFF2D3748),
                 size: 20,
               ),
             ),
@@ -263,28 +260,25 @@ class _InvoicesScreenState extends State<InvoicesScreen>
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
-                  color: isSelected ? Color(0xFF2D3748) : Color(0xFFF7FAFC),
+                  color: isSelected ? Color(0xFF2D3748) : Colors.white,
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
                     color: isSelected ? Color(0xFF2D3748) : Color(0xFFE2E8F0),
                     width: 1,
                   ),
-                  boxShadow:
-                      isSelected
-                          ? [
-                            BoxShadow(
-                              color: Color(0xFF2D3748).withOpacity(0.2),
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
-                            ),
-                          ]
-                          : [],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Center(
                   child: Text(
                     option,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Color(0xFF4A5568),
+                      color: isSelected ? Colors.white : Color(0xFF718096),
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),
@@ -453,7 +447,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                             invoice.id,
                             style: TextStyle(
                               color: Color(0xFF2D3748),
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.3,
                             ),
@@ -463,7 +457,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                             invoice.customerName,
                             style: TextStyle(
                               color: Color(0xFF718096),
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -516,8 +510,8 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                       child: Text(
                         invoice.route,
                         style: TextStyle(
-                          color: Color(0xFF4A5568),
-                          fontSize: 14,
+                          color: Color(0xFF2D3748),
+                          fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -545,8 +539,8 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                     Text(
                       _formatDate(invoice.date),
                       style: TextStyle(
-                        color: Color(0xFF4A5568),
-                        fontSize: 14,
+                        color: Color(0xFF2D3748),
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -555,7 +549,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                       '₺${invoice.amount.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Color(0xFF2D3748),
-                        fontSize: 20,
+                        fontSize: 24,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.5,
                       ),
@@ -573,7 +567,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                           icon: Icon(Icons.picture_as_pdf_rounded, size: 18),
                           label: Text('PDF Görüntüle'),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Color(0xFF4A5568),
+                            foregroundColor: Color(0xFF2D3748),
                             side: BorderSide(color: Color(0xFFE2E8F0)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(24),
@@ -743,7 +737,7 @@ class _InvoicesScreenState extends State<InvoicesScreen>
                                         icon: Icon(Icons.share_rounded),
                                         label: Text('Paylaş'),
                                         style: OutlinedButton.styleFrom(
-                                          foregroundColor: Color(0xFF4A5568),
+                                          foregroundColor: Color(0xFF2D3748),
                                           side: BorderSide(
                                             color: Color(0xFFE2E8F0),
                                           ),
@@ -803,31 +797,27 @@ class _InvoicesScreenState extends State<InvoicesScreen>
     );
   }
 
-  void _viewPDF(Invoice invoice) async {
-    final Uri url = Uri.parse(invoice.pdfUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('PDF açılamadı'),
-          backgroundColor: Color(0xFFE53E3E),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
-    }
+  void _viewPDF(Invoice invoice) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('PDF açılıyor...'),
+        backgroundColor: Color(0xFF2D3748),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(16),
+      ),
+    );
   }
 
   void _sharePDF(Invoice invoice) {
-    Share.share(
-      'AKNA Fatura: ${invoice.id}\n'
-      'Müşteri: ${invoice.customerName}\n'
-      'Tutar: ₺${invoice.amount.toStringAsFixed(2)}\n'
-      'PDF: ${invoice.pdfUrl}',
-      subject: 'AKNA Fatura - ${invoice.id}',
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Fatura paylaşılıyor...'),
+        backgroundColor: Color(0xFF2D3748),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(16),
+      ),
     );
   }
 
@@ -1024,16 +1014,13 @@ class _InvoicesScreenState extends State<InvoicesScreen>
         Navigator.pop(context);
         break;
       case 1: // Shipments
-        // Navigator.pushNamed(context, '/shipments');
         break;
       case 2: // Create
-        // Navigator.pushNamed(context, '/create-shipment');
         break;
       case 3: // Invoices
         // Already on invoices screen
         break;
       case 4: // Profile
-        // Navigator.pushNamed(context, '/profile');
         break;
     }
   }

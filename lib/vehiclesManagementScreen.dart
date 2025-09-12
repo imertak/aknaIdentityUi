@@ -1,5 +1,58 @@
-// screens/vehicles_management_screen.dart
+// vehicles_management_screen.dart
 import 'package:flutter/material.dart';
+import 'components/custom_bottom_navigation.dart';
+
+enum VehicleStatus { active, inactive, maintenance }
+
+enum DriverStatus { active, offline, busy }
+
+class Vehicle {
+  final String id;
+  final String plateNumber;
+  final String brand;
+  final String model;
+  final int year;
+  final String capacity;
+  final VehicleStatus status;
+  final String driverName;
+  final String lastLocation;
+  final int fuelLevel;
+
+  Vehicle({
+    required this.id,
+    required this.plateNumber,
+    required this.brand,
+    required this.model,
+    required this.year,
+    required this.capacity,
+    required this.status,
+    required this.driverName,
+    required this.lastLocation,
+    required this.fuelLevel,
+  });
+}
+
+class Driver {
+  final String id;
+  final String name;
+  final String phone;
+  final String licenseClass;
+  final String experience;
+  final double rating;
+  final DriverStatus status;
+  final String currentVehicle;
+
+  Driver({
+    required this.id,
+    required this.name,
+    required this.phone,
+    required this.licenseClass,
+    required this.experience,
+    required this.rating,
+    required this.status,
+    required this.currentVehicle,
+  });
+}
 
 class VehiclesManagementScreen extends StatefulWidget {
   const VehiclesManagementScreen({Key? key}) : super(key: key);
@@ -14,6 +67,8 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
   late TabController _tabController;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+
+  int _selectedBottomNavIndex = 3;
 
   // Sample data - In real app, this would come from API
   List<Vehicle> vehicles = [
@@ -112,70 +167,129 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: _buildAppBar(),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Column(
-          children: [
-            _buildTabBar(),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [_buildVehiclesTab(), _buildDriversTab()],
+      backgroundColor: Color(0xFFF5F5F7),
+      body: SafeArea(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Column(
+            children: [
+              _buildHeader(),
+              _buildTabBar(),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [_buildVehiclesTab(), _buildDriversTab()],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+      bottomNavigationBar: _buildBottomNavigation(),
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.black,
-      elevation: 0,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Navigator.pop(context),
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(24, 16, 24, 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      title: Text(
-        'Araçlar & Şöförler',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.arrow_back_rounded,
+                color: Color(0xFF2D3748),
+                size: 20,
+              ),
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Araçlar & Şoförler',
+                  style: TextStyle(
+                    color: Color(0xFF2D3748),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Filo yönetimi ve sürücü takibi',
+                  style: TextStyle(
+                    color: Color(0xFF718096),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.search, color: Colors.white),
-          onPressed: () => _showSearchDialog(),
-        ),
-        IconButton(
-          icon: Icon(Icons.filter_list, color: Colors.white),
-          onPressed: () => _showFilterDialog(),
-        ),
-      ],
     );
   }
 
   Widget _buildTabBar() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: TabBar(
         controller: _tabController,
         indicator: BoxDecoration(
-          color: Color(0xFFCEFF00),
-          borderRadius: BorderRadius.circular(12),
+          color: Color(0xFF2D3748),
+          borderRadius: BorderRadius.circular(22),
         ),
-        labelColor: Colors.black,
-        unselectedLabelColor: Colors.grey[400],
-        labelStyle: TextStyle(fontWeight: FontWeight.w600),
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelColor: Colors.white,
+        unselectedLabelColor: Color(0xFF718096),
+        labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        unselectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
+        dividerColor: Colors.transparent,
         tabs: [
           Tab(
             child: Row(
@@ -193,7 +307,7 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
               children: [
                 Icon(Icons.person, size: 20),
                 SizedBox(width: 8),
-                Text('Şöförler'),
+                Text('Şoförler'),
               ],
             ),
           ),
@@ -203,120 +317,22 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
   }
 
   Widget _buildVehiclesTab() {
-    return Column(
-      children: [
-        _buildVehicleStats(),
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.all(20),
-            itemCount: vehicles.length,
-            itemBuilder: (context, index) {
-              return _buildVehicleCard(vehicles[index]);
-            },
-          ),
-        ),
-      ],
+    return ListView.builder(
+      padding: EdgeInsets.all(24),
+      itemCount: vehicles.length,
+      itemBuilder: (context, index) {
+        return _buildVehicleCard(vehicles[index]);
+      },
     );
   }
 
   Widget _buildDriversTab() {
-    return Column(
-      children: [
-        _buildDriverStats(),
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.all(20),
-            itemCount: drivers.length,
-            itemBuilder: (context, index) {
-              return _buildDriverCard(drivers[index]);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildVehicleStats() {
-    return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFCEFF00).withOpacity(0.1),
-            Color(0xFFCEFF00).withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0xFFCEFF00).withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem('${vehicles.length}', 'Toplam Araç'),
-          Container(width: 1, height: 30, color: Colors.grey[700]),
-          _buildStatItem(
-            '${vehicles.where((v) => v.status == VehicleStatus.active).length}',
-            'Aktif',
-          ),
-          Container(width: 1, height: 30, color: Colors.grey[700]),
-          _buildStatItem(
-            '${vehicles.where((v) => v.status == VehicleStatus.maintenance).length}',
-            'Bakımda',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDriverStats() {
-    return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFCEFF00).withOpacity(0.1),
-            Color(0xFFCEFF00).withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0xFFCEFF00).withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem('${drivers.length}', 'Toplam Şöför'),
-          Container(width: 1, height: 30, color: Colors.grey[700]),
-          _buildStatItem(
-            '${drivers.where((d) => d.status == DriverStatus.active).length}',
-            'Aktif',
-          ),
-          Container(width: 1, height: 30, color: Colors.grey[700]),
-          _buildStatItem('4.8', 'Ort. Puan'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String value, String label) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: Color(0xFFCEFF00),
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 12)),
-      ],
+    return ListView.builder(
+      padding: EdgeInsets.all(24),
+      itemCount: drivers.length,
+      itemBuilder: (context, index) {
+        return _buildDriverCard(drivers[index]);
+      },
     );
   }
 
@@ -324,143 +340,70 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[800]!),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: _getVehicleStatusColor(
-                      vehicle.status,
-                    ).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.local_shipping,
-                    color: _getVehicleStatusColor(vehicle.status),
-                    size: 30,
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            vehicle.plateNumber,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _getVehicleStatusColor(
-                                vehicle.status,
-                              ).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              _getVehicleStatusText(vehicle.status),
-                              style: TextStyle(
-                                color: _getVehicleStatusColor(vehicle.status),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        '${vehicle.brand} ${vehicle.model} (${vehicle.year})',
-                        style: TextStyle(color: Colors.grey[400], fontSize: 14),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Kapasite: ${vehicle.capacity}',
-                        style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey[800]!.withOpacity(0.5),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(16),
-                bottomRight: Radius.circular(16),
+          ListTile(
+            contentPadding: EdgeInsets.all(16),
+            leading: CircleAvatar(
+              backgroundColor: _getVehicleStatusColor(
+                vehicle.status,
+              ).withOpacity(0.1),
+              radius: 24,
+              child: Icon(
+                Icons.local_shipping,
+                color: _getVehicleStatusColor(vehicle.status),
+                size: 24,
               ),
             ),
+            title: Text(
+              vehicle.plateNumber,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF2D3748),
+              ),
+            ),
+            subtitle: Text(
+              '${vehicle.brand} ${vehicle.model}',
+              style: TextStyle(color: Color(0xFF718096), fontSize: 14),
+            ),
+            trailing: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: _getVehicleStatusColor(vehicle.status).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _getVehicleStatusText(vehicle.status),
+                style: TextStyle(
+                  color: _getVehicleStatusColor(vehicle.status),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+          Divider(height: 1),
+          Padding(
+            padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Icon(Icons.person, color: Colors.grey[400], size: 16),
-                    SizedBox(width: 8),
-                    Text(
-                      vehicle.driverName,
-                      style: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    ),
-                    Spacer(),
-                    Icon(Icons.location_on, color: Colors.grey[400], size: 16),
-                    SizedBox(width: 8),
-                    Text(
-                      vehicle.lastLocation,
-                      style: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.local_gas_station,
-                      color: Colors.grey[400],
-                      size: 16,
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      'Yakıt: %${vehicle.fuelLevel}',
-                      style: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: LinearProgressIndicator(
-                        value: vehicle.fuelLevel / 100,
-                        backgroundColor: Colors.grey[700],
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          vehicle.fuelLevel > 30 ? Colors.green : Colors.red,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    GestureDetector(
-                      onTap: () => _showVehicleDetails(vehicle),
-                      child: Icon(Icons.more_vert, color: Colors.grey[400]),
-                    ),
-                  ],
-                ),
+                _buildInfoRow(Icons.person_outline, vehicle.driverName),
+                SizedBox(height: 8),
+                _buildInfoRow(Icons.location_on_outlined, vehicle.lastLocation),
+                SizedBox(height: 8),
+                _buildFuelIndicator(vehicle.fuelLevel),
               ],
             ),
           ),
@@ -472,99 +415,77 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
   Widget _buildDriverCard(Driver driver) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[800]!),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: _getDriverStatusColor(driver.status).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Center(
+          ListTile(
+            contentPadding: EdgeInsets.all(16),
+            leading: CircleAvatar(
+              backgroundColor: _getDriverStatusColor(
+                driver.status,
+              ).withOpacity(0.1),
+              radius: 24,
               child: Text(
                 driver.name[0].toUpperCase(),
                 style: TextStyle(
                   color: _getDriverStatusColor(driver.status),
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            title: Text(
+              driver.name,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF2D3748),
+              ),
+            ),
+            subtitle: Text(
+              driver.phone,
+              style: TextStyle(color: Color(0xFF718096), fontSize: 14),
+            ),
+            trailing: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: _getDriverStatusColor(driver.status).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _getDriverStatusText(driver.status),
+                style: TextStyle(
+                  color: _getDriverStatusColor(driver.status),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
                 ),
               ),
             ),
           ),
-          SizedBox(width: 16),
-          Expanded(
+          Divider(height: 1),
+          Padding(
+            padding: EdgeInsets.all(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      driver.name,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getDriverStatusColor(
-                          driver.status,
-                        ).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        _getDriverStatusText(driver.status),
-                        style: TextStyle(
-                          color: _getDriverStatusColor(driver.status),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '${driver.licenseClass} • ${driver.experience}',
-                  style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                _buildInfoRow(
+                  Icons.card_membership_outlined,
+                  driver.licenseClass,
                 ),
                 SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.amber, size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      '${driver.rating}',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    SizedBox(width: 16),
-                    Icon(
-                      Icons.local_shipping,
-                      color: Colors.grey[400],
-                      size: 16,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      driver.currentVehicle,
-                      style: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    ),
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () => _showDriverDetails(driver),
-                      child: Icon(Icons.more_vert, color: Colors.grey[400]),
-                    ),
-                  ],
-                ),
+                _buildInfoRow(Icons.access_time_outlined, driver.experience),
+                SizedBox(height: 8),
+                _buildRatingIndicator(driver.rating),
               ],
             ),
           ),
@@ -573,14 +494,117 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
     );
   }
 
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Color(0xFF718096)),
+        SizedBox(width: 8),
+        Text(
+          text,
+          style: TextStyle(
+            color: Color(0xFF2D3748),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFuelIndicator(int fuelLevel) {
+    return Row(
+      children: [
+        Icon(Icons.local_gas_station, size: 16, color: Color(0xFF718096)),
+        SizedBox(width: 8),
+        Expanded(
+          child: Container(
+            height: 6,
+            decoration: BoxDecoration(
+              color: Color(0xFFE2E8F0),
+              borderRadius: BorderRadius.circular(3),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: fuelLevel / 100,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _getFuelColor(fuelLevel),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 8),
+        Text(
+          '%$fuelLevel',
+          style: TextStyle(
+            color: Color(0xFF2D3748),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRatingIndicator(double rating) {
+    return Row(
+      children: [
+        Icon(Icons.star, size: 16, color: Colors.amber),
+        SizedBox(width: 8),
+        Text(
+          rating.toString(),
+          style: TextStyle(
+            color: Color(0xFF2D3748),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomNavigation() {
+    return CustomBottomNavigation(
+      selectedIndex: _selectedBottomNavIndex,
+      onItemSelected: _onNavItemTapped,
+      userType: "Carrier",
+    );
+  }
+
+  void _onNavItemTapped(int index) {
+    setState(() {
+      _selectedBottomNavIndex = index;
+    });
+
+    switch (index) {
+      case 0: // Ana Sayfa
+        Navigator.pop(context);
+        break;
+      case 1: // Araçlar
+        // Already on vehicles screen
+        break;
+      case 2: // İşler
+        // Navigate to jobs screen
+        break;
+      case 3: // Şoförler
+        // Navigate to drivers screen
+        break;
+      case 4: // Ayarlar
+        // Navigate to settings screen
+        break;
+    }
+  }
+
   Color _getVehicleStatusColor(VehicleStatus status) {
     switch (status) {
       case VehicleStatus.active:
-        return Colors.green;
+        return Color(0xFF38A169);
       case VehicleStatus.inactive:
-        return Colors.grey;
+        return Color(0xFF718096);
       case VehicleStatus.maintenance:
-        return Colors.orange;
+        return Color(0xFFED8936);
     }
   }
 
@@ -591,18 +615,18 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
       case VehicleStatus.inactive:
         return 'Pasif';
       case VehicleStatus.maintenance:
-        return 'Bakım';
+        return 'Bakımda';
     }
   }
 
   Color _getDriverStatusColor(DriverStatus status) {
     switch (status) {
       case DriverStatus.active:
-        return Colors.green;
+        return Color(0xFF38A169);
       case DriverStatus.offline:
-        return Colors.grey;
+        return Color(0xFF718096);
       case DriverStatus.busy:
-        return Colors.orange;
+        return Color(0xFFED8936);
     }
   }
 
@@ -617,297 +641,13 @@ class _VehiclesManagementScreenState extends State<VehiclesManagementScreen>
     }
   }
 
-  void _showSearchDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: Colors.grey[900],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: Text('Ara', style: TextStyle(color: Colors.white)),
-            content: TextField(
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Plaka, şöför adı veya marka...',
-                hintStyle: TextStyle(color: Colors.grey[400]),
-                filled: true,
-                fillColor: Colors.grey[800],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('İptal', style: TextStyle(color: Colors.grey[400])),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFCEFF00),
-                  foregroundColor: Colors.black,
-                ),
-                child: Text('Ara'),
-              ),
-            ],
-          ),
-    );
-  }
-
-  void _showFilterDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: Colors.grey[900],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: Text('Filtrele', style: TextStyle(color: Colors.white)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Durum',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                CheckboxListTile(
-                  title: Text('Aktif', style: TextStyle(color: Colors.white)),
-                  value: true,
-                  onChanged: (value) {},
-                  activeColor: Color(0xFFCEFF00),
-                ),
-                CheckboxListTile(
-                  title: Text('Bakımda', style: TextStyle(color: Colors.white)),
-                  value: false,
-                  onChanged: (value) {},
-                  activeColor: Color(0xFFCEFF00),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'Temizle',
-                  style: TextStyle(color: Colors.grey[400]),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFCEFF00),
-                  foregroundColor: Colors.black,
-                ),
-                child: Text('Uygula'),
-              ),
-            ],
-          ),
-    );
-  }
-
-  void _showVehicleDetails(Vehicle vehicle) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder:
-          (context) => Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.grey[900],
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            padding: EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      vehicle.plateNumber,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Color(0xFFCEFF00)),
-                          onPressed: () => _editVehicle(vehicle),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteVehicle(vehicle),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow('Marka', vehicle.brand),
-                _buildDetailRow('Model', vehicle.model),
-                _buildDetailRow('Yıl', vehicle.year.toString()),
-                _buildDetailRow('Kapasite', vehicle.capacity),
-                _buildDetailRow('Şöför', vehicle.driverName),
-                _buildDetailRow('Son Konum', vehicle.lastLocation),
-                _buildDetailRow('Yakıt Seviyesi', '%${vehicle.fuelLevel}'),
-                _buildDetailRow('Durum', _getVehicleStatusText(vehicle.status)),
-              ],
-            ),
-          ),
-    );
-  }
-
-  void _showDriverDetails(Driver driver) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder:
-          (context) => Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.grey[900],
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            padding: EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      driver.name,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Color(0xFFCEFF00)),
-                          onPressed: () => _editDriver(driver),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteDriver(driver),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                _buildDetailRow('Telefon', driver.phone),
-                _buildDetailRow('Ehliyet Sınıfı', driver.licenseClass),
-                _buildDetailRow('Deneyim', driver.experience),
-                _buildDetailRow('Puan', driver.rating.toString()),
-                _buildDetailRow('Araç', driver.currentVehicle),
-                _buildDetailRow('Durum', _getDriverStatusText(driver.status)),
-              ],
-            ),
-          ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 16)),
-          Text(value, style: TextStyle(color: Colors.white, fontSize: 16)),
-        ],
-      ),
-    );
-  }
-
-  void _editVehicle(Vehicle vehicle) {
-    Navigator.pop(context);
-    // Navigate to edit vehicle screen
-    print('Edit vehicle: ${vehicle.plateNumber}');
-  }
-
-  void _deleteVehicle(Vehicle vehicle) {
-    Navigator.pop(context);
-    // Show confirmation dialog and delete
-    print('Delete vehicle: ${vehicle.plateNumber}');
-  }
-
-  void _editDriver(Driver driver) {
-    Navigator.pop(context);
-    // Navigate to edit driver screen
-    print('Edit driver: ${driver.name}');
-  }
-
-  void _deleteDriver(Driver driver) {
-    Navigator.pop(context);
-    // Show confirmation dialog and delete
-    print('Delete driver: ${driver.name}');
+  Color _getFuelColor(int level) {
+    if (level > 50) {
+      return Color(0xFF38A169);
+    } else if (level > 20) {
+      return Color(0xFFED8936);
+    } else {
+      return Color(0xFFE53E3E);
+    }
   }
 }
-
-// Model classes
-class Vehicle {
-  final String id;
-  final String plateNumber;
-  final String brand;
-  final String model;
-  final int year;
-  final String capacity;
-  final VehicleStatus status;
-  final String driverName;
-  final String lastLocation;
-  final int fuelLevel;
-
-  Vehicle({
-    required this.id,
-    required this.plateNumber,
-    required this.brand,
-    required this.model,
-    required this.year,
-    required this.capacity,
-    required this.status,
-    required this.driverName,
-    required this.lastLocation,
-    required this.fuelLevel,
-  });
-}
-
-class Driver {
-  final String id;
-  final String name;
-  final String phone;
-  final String licenseClass;
-  final String experience;
-  final double rating;
-  final DriverStatus status;
-  final String currentVehicle;
-
-  Driver({
-    required this.id,
-    required this.name,
-    required this.phone,
-    required this.licenseClass,
-    required this.experience,
-    required this.rating,
-    required this.status,
-    required this.currentVehicle,
-  });
-}
-
-enum VehicleStatus { active, inactive, maintenance }
-
-enum DriverStatus { active, offline, busy }
