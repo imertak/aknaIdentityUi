@@ -1,5 +1,6 @@
-// shipment_history_screen.dart - Modernized
+// screens/shipper_shipment_history_screen.dart
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ShipmentHistoryScreen extends StatefulWidget {
   final String userName;
@@ -15,7 +16,6 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  int _selectedBottomNavIndex = 1; // Default to Shipments tab
 
   final TextEditingController _searchController = TextEditingController();
   String _selectedStatus = 'Tümü';
@@ -61,168 +61,67 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F7),
-      bottomNavigationBar: _buildBottomNavigation(),
-      body: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Column(
-            children: [
-              _buildHeader(),
-              _buildSearchAndFilters(),
-              _buildSummaryStats(),
-              Expanded(child: _buildShipmentsList()),
-            ],
-          ),
+      backgroundColor: Colors.black,
+      appBar: _buildAppBar(),
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Column(
+          children: [
+            _buildSearchAndFilters(),
+            _buildSummaryStats(),
+            Expanded(child: _buildShipmentsList()),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(24, 16, 24, 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.black,
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () => Navigator.pop(context),
       ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back_rounded,
-                color: Color(0xFF2D3748),
-                size: 20,
-              ),
-            ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Sevkiyat Geçmişi',
-                  style: TextStyle(
-                    color: Color(0xFF2D3748),
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  '${widget.userName} - Tüm İşlemler',
-                  style: TextStyle(
-                    color: Color(0xFF718096),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: _showFilterBottomSheet,
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.tune_rounded,
-                    color: Color(0xFF2D3748),
-                    size: 20,
-                  ),
-                ),
-              ),
-              SizedBox(width: 12),
-              GestureDetector(
-                onTap: _exportToExcel,
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.download_rounded,
-                    color: Color(0xFF2D3748),
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+      title: Text(
+        'Sevkiyat Geçmişi',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
       ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.filter_list, color: Color(0xFFCEFF00)),
+          onPressed: _showFilterBottomSheet,
+        ),
+        IconButton(
+          icon: Icon(Icons.download, color: Colors.white),
+          onPressed: _exportToExcel,
+        ),
+      ],
     );
   }
 
   Widget _buildSearchAndFilters() {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        border: Border(bottom: BorderSide(color: Colors.grey[800]!, width: 1)),
+      ),
       child: Column(
         children: [
           // Search Bar
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey[800],
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _isSearchActive ? Color(0xFF2D3748) : Color(0xFFE2E8F0),
+                color: _isSearchActive ? Color(0xFFCEFF00) : Colors.grey[700]!,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ],
             ),
             child: TextField(
               controller: _searchController,
@@ -231,21 +130,15 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                   _isSearchActive = value.isNotEmpty;
                 });
               },
-              style: TextStyle(color: Color(0xFF2D3748)),
+              style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Sevkiyat No, Şehir veya Alıcı ara...',
-                hintStyle: TextStyle(color: Color(0xFF718096)),
-                prefixIcon: Icon(
-                  Icons.search_rounded,
-                  color: Color(0xFF718096),
-                ),
+                hintStyle: TextStyle(color: Colors.grey[400]),
+                prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
                 suffixIcon:
                     _isSearchActive
                         ? IconButton(
-                          icon: Icon(
-                            Icons.clear_rounded,
-                            color: Color(0xFF718096),
-                          ),
+                          icon: Icon(Icons.clear, color: Colors.grey[400]),
                           onPressed: () {
                             _searchController.clear();
                             setState(() {
@@ -263,7 +156,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
             ),
           ),
 
-          SizedBox(height: 16),
+          SizedBox(height: 12),
 
           // Quick Filters
           Row(
@@ -271,15 +164,15 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
               Expanded(
                 child: _buildFilterChip(
                   'Durum: $_selectedStatus',
-                  Icons.flag_rounded,
+                  Icons.flag,
                   () => _showStatusFilter(),
                 ),
               ),
-              Container(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: _buildFilterChip(
                   _selectedDateRange,
-                  Icons.date_range_rounded,
+                  Icons.date_range,
                   () => _showDateRangeFilter(),
                 ),
               ),
@@ -287,6 +180,290 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFilterChip(String title, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey[800],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[700]!),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Color(0xFFCEFF00), size: 16),
+            SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Icon(Icons.arrow_drop_down, color: Colors.grey[400], size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryStats() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[900]!.withOpacity(0.5),
+        border: Border(bottom: BorderSide(color: Colors.grey[800]!, width: 1)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildStat('142', 'Toplam Sevkiyat', Colors.blue),
+          _buildStat('₺285K', 'Toplam Tutar', Color(0xFFCEFF00)),
+          _buildStat('97%', 'Başarı Oranı', Colors.green),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStat(String value, String label, Color color) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            color: color,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _buildShipmentsList() {
+    return RefreshIndicator(
+      onRefresh: _refreshShipments,
+      backgroundColor: Colors.grey[900],
+      color: Color(0xFFCEFF00),
+      child: ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: _getFilteredShipments().length,
+        itemBuilder: (context, index) {
+          final shipment = _getFilteredShipments()[index];
+          return _buildShipmentCard(shipment);
+        },
+      ),
+    );
+  }
+
+  Widget _buildShipmentCard(Map<String, dynamic> shipment) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[800]!),
+      ),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(shipment['status']).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    _getStatusIcon(shipment['status']),
+                    color: _getStatusColor(shipment['status']),
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        shipment['shipmentNo'],
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '${shipment['origin']} → ${shipment['destination']}',
+                        style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(
+                          shipment['status'],
+                        ).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _getStatusText(shipment['status']),
+                        style: TextStyle(
+                          color: _getStatusColor(shipment['status']),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      shipment['amount'],
+                      style: TextStyle(
+                        color: Color(0xFFCEFF00),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Details
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[800]!.withOpacity(0.5),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDetailItem(
+                        'Yük Türü',
+                        shipment['cargoType'],
+                        Icons.inventory_2,
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildDetailItem(
+                        'Ağırlık',
+                        shipment['weight'],
+                        Icons.scale,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDetailItem(
+                        'Tarih',
+                        shipment['date'],
+                        Icons.calendar_today,
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildDetailItem(
+                        'Taşıyıcı',
+                        shipment['carrier'],
+                        Icons.local_shipping,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _showShipmentDetails(shipment),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[800],
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text('Detaylar'),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _trackShipment(shipment),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFCEFF00),
+                          foregroundColor: Colors.black,
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text('Takip Et'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailItem(String title, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.grey[400], size: 16),
+        SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(color: Colors.grey[400], fontSize: 11),
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -299,28 +476,19 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
           (context) => Container(
             height: MediaQuery.of(context).size.height * 0.7,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             padding: EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFE2E8F0),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
                 Text(
                   'Filtrele',
                   style: TextStyle(
-                    color: Color(0xFF2D3748),
+                    color: Colors.white,
                     fontSize: 24,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 24),
@@ -329,9 +497,9 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                 Text(
                   'Durum',
                   style: TextStyle(
-                    color: Color(0xFF2D3748),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    color: Colors.grey[400],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: 12),
@@ -351,30 +519,23 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                             decoration: BoxDecoration(
                               color:
                                   isSelected
-                                      ? Color(0xFF2D3748).withOpacity(0.1)
-                                      : Colors.white,
+                                      ? Color(0xFFCEFF00).withOpacity(0.2)
+                                      : Colors.grey[800],
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color:
                                     isSelected
-                                        ? Color(0xFF2D3748)
-                                        : Color(0xFFE2E8F0),
+                                        ? Color(0xFFCEFF00)
+                                        : Colors.grey[700]!,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: Offset(0, 1),
-                                ),
-                              ],
                             ),
                             child: Text(
                               status,
                               style: TextStyle(
                                 color:
                                     isSelected
-                                        ? Color(0xFF2D3748)
-                                        : Color(0xFF718096),
+                                        ? Color(0xFFCEFF00)
+                                        : Colors.white,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -389,9 +550,9 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                 Text(
                   'Tarih Aralığı',
                   style: TextStyle(
-                    color: Color(0xFF2D3748),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    color: Colors.grey[400],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: 12),
@@ -408,22 +569,15 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                             decoration: BoxDecoration(
                               color:
                                   isSelected
-                                      ? Color(0xFF2D3748).withOpacity(0.05)
-                                      : Colors.white,
-                              borderRadius: BorderRadius.circular(16),
+                                      ? Color(0xFFCEFF00).withOpacity(0.1)
+                                      : Colors.grey[800],
+                              borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color:
                                     isSelected
-                                        ? Color(0xFF2D3748)
-                                        : Color(0xFFE2E8F0),
+                                        ? Color(0xFFCEFF00)
+                                        : Colors.grey[700]!,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: Offset(0, 1),
-                                ),
-                              ],
                             ),
                             child: Row(
                               children: [
@@ -433,8 +587,8 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                                       : Icons.radio_button_unchecked,
                                   color:
                                       isSelected
-                                          ? Color(0xFF2D3748)
-                                          : Color(0xFF718096),
+                                          ? Color(0xFFCEFF00)
+                                          : Colors.grey[600],
                                 ),
                                 SizedBox(width: 12),
                                 Text(
@@ -442,8 +596,8 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                                   style: TextStyle(
                                     color:
                                         isSelected
-                                            ? Color(0xFF2D3748)
-                                            : Color(0xFF718096),
+                                            ? Color(0xFFCEFF00)
+                                            : Colors.white,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -462,8 +616,8 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF2D3748),
-                      foregroundColor: Colors.white,
+                      backgroundColor: Color(0xFFCEFF00),
+                      foregroundColor: Colors.black,
                       padding: EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -473,7 +627,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                       'Filtreyi Uygula',
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -491,7 +645,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
       builder:
           (context) => Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey[900],
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             padding: EdgeInsets.all(24),
@@ -502,21 +656,18 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                 Text(
                   'Durum Seçin',
                   style: TextStyle(
-                    color: Color(0xFF2D3748),
+                    color: Colors.white,
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 16),
                 ...(_statusOptions.map((status) {
                   return ListTile(
-                    title: Text(
-                      status,
-                      style: TextStyle(color: Color(0xFF2D3748)),
-                    ),
+                    title: Text(status, style: TextStyle(color: Colors.white)),
                     trailing:
                         _selectedStatus == status
-                            ? Icon(Icons.check, color: Color(0xFF2D3748))
+                            ? Icon(Icons.check, color: Color(0xFFCEFF00))
                             : null,
                     onTap: () {
                       setState(() => _selectedStatus = status);
@@ -537,7 +688,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
       builder:
           (context) => Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey[900],
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             padding: EdgeInsets.all(24),
@@ -548,21 +699,18 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                 Text(
                   'Tarih Aralığı Seçin',
                   style: TextStyle(
-                    color: Color(0xFF2D3748),
+                    color: Colors.white,
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 16),
                 ...(_dateRangeOptions.map((range) {
                   return ListTile(
-                    title: Text(
-                      range,
-                      style: TextStyle(color: Color(0xFF2D3748)),
-                    ),
+                    title: Text(range, style: TextStyle(color: Colors.white)),
                     trailing:
                         _selectedDateRange == range
-                            ? Icon(Icons.check, color: Color(0xFF2D3748))
+                            ? Icon(Icons.check, color: Color(0xFFCEFF00))
                             : null,
                     onTap: () {
                       setState(() => _selectedDateRange = range);
@@ -585,8 +733,8 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
           (context) => Container(
             height: MediaQuery.of(context).size.height * 0.8,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              color: Colors.grey[900],
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             padding: EdgeInsets.all(24),
             child: Column(
@@ -598,14 +746,14 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                       child: Text(
                         'Sevkiyat Detayları',
                         style: TextStyle(
-                          color: Color(0xFF2D3748),
+                          color: Colors.white,
                           fontSize: 24,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, color: Color(0xFF718096)),
+                      icon: Icon(Icons.close, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
@@ -614,10 +762,10 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
 
                 // Shipment Status
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: _getStatusColor(shipment['status']).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _getStatusColor(
                         shipment['status'],
@@ -639,9 +787,9 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                             Text(
                               shipment['shipmentNo'],
                               style: TextStyle(
-                                color: Color(0xFF2D3748),
+                                color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
@@ -658,9 +806,9 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                       Text(
                         shipment['amount'],
                         style: TextStyle(
-                          color: Color(0xFF2D3748),
+                          color: Color(0xFFCEFF00),
                           fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -699,37 +847,32 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
                 Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        height: 52,
-                        child: OutlinedButton(
-                          onPressed: () => _downloadInvoice(shipment),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Color(0xFF2D3748),
-                            side: BorderSide(color: Color(0xFFE2E8F0)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(26),
-                            ),
+                      child: ElevatedButton(
+                        onPressed: () => _downloadInvoice(shipment),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[800],
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text('Fatura İndir'),
                         ),
+                        child: Text('Fatura İndir'),
                       ),
                     ),
                     SizedBox(width: 12),
                     Expanded(
-                      child: Container(
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed: () => _contactCarrier(shipment),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF2D3748),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(26),
-                            ),
+                      child: ElevatedButton(
+                        onPressed: () => _contactCarrier(shipment),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFCEFF00),
+                          foregroundColor: Colors.black,
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text('Taşıyıcı İletişim'),
                         ),
+                        child: Text('Taşıyıcı İletişim'),
                       ),
                     ),
                   ],
@@ -745,8 +888,8 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Color(0xFFF7FAFC),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey[800],
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -756,7 +899,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
             child: Text(
               title,
               style: TextStyle(
-                color: Color(0xFF718096),
+                color: Colors.grey[400],
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -766,7 +909,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
             child: Text(
               value,
               style: TextStyle(
-                color: Color(0xFF2D3748),
+                color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -788,7 +931,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Excel dosyası indiriliyor...'),
-        backgroundColor: Color(0xFF2D3748),
+        backgroundColor: Color(0xFFCEFF00),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -802,7 +945,7 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Fatura indiriliyor...'),
-        backgroundColor: Color(0xFF2D3748),
+        backgroundColor: Color(0xFFCEFF00),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -816,15 +959,15 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
   Color _getStatusColor(String status) {
     switch (status) {
       case 'delivered':
-        return Color(0xFF38A169);
+        return Colors.green;
       case 'cancelled':
-        return Color(0xFFE53E3E);
+        return Colors.red;
       case 'pending':
-        return Color(0xFFED8936);
+        return Colors.orange;
       case 'active':
-        return Color(0xFF3182CE);
+        return Colors.blue;
       default:
-        return Color(0xFF718096);
+        return Colors.grey;
     }
   }
 
@@ -855,127 +998,6 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
         return 'Aktif';
       default:
         return 'Bilinmiyor';
-    }
-  }
-
-  Widget _buildBottomNavigation() {
-    return Container(
-      height: 90,
-      decoration: BoxDecoration(
-        color: Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 20,
-            offset: Offset(0, -5),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildNavItem(Icons.home_rounded, 0),
-            _buildNavItem(Icons.local_shipping_rounded, 1),
-            _buildNavItem(Icons.add_rounded, 2, isCenter: true),
-            _buildNavItem(Icons.receipt_rounded, 3),
-            _buildNavItem(Icons.person_rounded, 4),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, int index, {bool isCenter = false}) {
-    bool isSelected = _selectedBottomNavIndex == index;
-
-    if (isCenter) {
-      return GestureDetector(
-        onTap: () => _handleBottomNavTap(index),
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Icon(icon, color: Color(0xFF1A1A1A), size: 28),
-        ),
-      );
-    }
-
-    return GestureDetector(
-      onTap: () => _handleBottomNavTap(index),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color:
-                    isSelected
-                        ? Colors.white.withOpacity(0.2)
-                        : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                color:
-                    isSelected ? Colors.white : Colors.white.withOpacity(0.6),
-                size: 24,
-              ),
-            ),
-            if (isSelected)
-              Container(
-                margin: EdgeInsets.only(top: 4),
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _handleBottomNavTap(int index) {
-    setState(() {
-      _selectedBottomNavIndex = index;
-    });
-
-    switch (index) {
-      case 0: // Home
-        Navigator.pop(context);
-        break;
-      case 1: // Shipments
-        // Already on shipments screen
-        break;
-      case 2: // Create
-        break;
-      case 3: // Invoices
-        break;
-      case 4: // Profile
-        break;
     }
   }
 
@@ -1046,6 +1068,102 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
         'paymentStatus': 'İptal',
         'status': 'cancelled',
       },
+      {
+        'shipmentNo': 'SHP-2024-005',
+        'origin': 'Bursa',
+        'destination': 'Trabzon',
+        'cargoType': 'Otomotiv Parçaları',
+        'weight': '2.1 ton',
+        'date': '05 Ara 2024',
+        'carrier': 'Karadeniz Kargo',
+        'driver': 'Osman Korkmaz',
+        'plate': '16 JKL 345',
+        'recipient': 'Gamze Yıldız',
+        'recipientPhone': '+90 542 777 8888',
+        'amount': '₺9,400',
+        'paymentStatus': 'Ödendi',
+        'status': 'delivered',
+      },
+      {
+        'shipmentNo': 'SHP-2024-006',
+        'origin': 'Adana',
+        'destination': 'İstanbul',
+        'cargoType': 'Tarım Ürünleri',
+        'weight': '5.8 ton',
+        'date': '03 Ara 2024',
+        'carrier': 'Akdeniz Nakliyat',
+        'driver': 'Serkan Güneş',
+        'plate': '01 MNO 678',
+        'recipient': 'Elif Erdoğan',
+        'recipientPhone': '+90 534 999 0000',
+        'amount': '₺18,900',
+        'paymentStatus': 'Kısmi Ödeme',
+        'status': 'pending',
+      },
+      {
+        'shipmentNo': 'SHP-2024-007',
+        'origin': 'Kayseri',
+        'destination': 'Samsun',
+        'cargoType': 'İnşaat Malzemesi',
+        'weight': '7.2 ton',
+        'date': '01 Ara 2024',
+        'carrier': 'Anadolu Express',
+        'driver': 'Kemal Şahin',
+        'plate': '38 PQR 901',
+        'recipient': 'Sibel Kılıç',
+        'recipientPhone': '+90 505 333 4444',
+        'amount': '₺25,300',
+        'paymentStatus': 'Ödendi',
+        'status': 'delivered',
+      },
+      {
+        'shipmentNo': 'SHP-2024-008',
+        'origin': 'Gaziantep',
+        'destination': 'İstanbul',
+        'cargoType': 'Plastik Ürünler',
+        'weight': '1.5 ton',
+        'date': '28 Kas 2024',
+        'carrier': 'Güneydoğu Lojistik',
+        'driver': 'Hatice Arslan',
+        'plate': '27 STU 234',
+        'recipient': 'İbrahim Çiçek',
+        'recipientPhone': '+90 536 666 7777',
+        'amount': '₺5,800',
+        'paymentStatus': 'Beklemede',
+        'status': 'active',
+      },
+      {
+        'shipmentNo': 'SHP-2024-009',
+        'origin': 'Konya',
+        'destination': 'Mersin',
+        'cargoType': 'Kimyasal Ürünler',
+        'weight': '3.8 ton',
+        'date': '25 Kas 2024',
+        'carrier': 'Özel Taşımacılık',
+        'driver': 'Murat Kaplan',
+        'plate': '42 VWX 567',
+        'recipient': 'Leyla Özmen',
+        'recipientPhone': '+90 544 222 3333',
+        'amount': '₺14,700',
+        'paymentStatus': 'İptal',
+        'status': 'cancelled',
+      },
+      {
+        'shipmentNo': 'SHP-2024-010',
+        'origin': 'Eskişehir',
+        'destination': 'Denizli',
+        'cargoType': 'Teknoloji Ürünleri',
+        'weight': '0.8 ton',
+        'date': '22 Kas 2024',
+        'carrier': 'Hızlı Teslimat',
+        'driver': 'Canan Yıldırım',
+        'plate': '26 YZA 890',
+        'recipient': 'Recep Öz',
+        'recipientPhone': '+90 531 888 9999',
+        'amount': '₺4,200',
+        'paymentStatus': 'Ödendi',
+        'status': 'delivered',
+      },
     ];
 
     // Apply filters
@@ -1089,397 +1207,5 @@ class _ShipmentHistoryScreenState extends State<ShipmentHistoryScreen>
     });
 
     return filteredShipments;
-  }
-
-  Widget _buildFilterChip(String title, IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Color(0xFFE2E8F0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 4,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: Color(0xFF2D3748), size: 16),
-            SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: Color(0xFF2D3748),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Icon(Icons.arrow_drop_down, color: Color(0xFF718096), size: 16),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSummaryStats() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildStatCard(
-              '142',
-              'Toplam\nSevkiyat',
-              Color(0xFF3182CE),
-              Icons.local_shipping_rounded,
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              '₺285K',
-              'Toplam\nTutar',
-              Color(0xFF38A169),
-              Icons.payments_rounded,
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              '97%',
-              'Başarı\nOranı',
-              Color(0xFFED8936),
-              Icons.star_rounded,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(
-    String value,
-    String label,
-    Color color,
-    IconData icon,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: color.withOpacity(0.2), width: 1),
-            ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              color: Color(0xFF2D3748),
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
-            ),
-          ),
-          SizedBox(height: 6),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFF718096),
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShipmentsList() {
-    return RefreshIndicator(
-      onRefresh: _refreshShipments,
-      backgroundColor: Colors.white,
-      color: Color(0xFF2D3748),
-      child: ListView.builder(
-        padding: EdgeInsets.all(24),
-        itemCount: _getFilteredShipments().length,
-        itemBuilder: (context, index) {
-          final shipment = _getFilteredShipments()[index];
-          return _buildShipmentCard(shipment);
-        },
-      ),
-    );
-  }
-
-  Widget _buildShipmentCard(Map<String, dynamic> shipment) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Header
-          Container(
-            padding: EdgeInsets.all(24),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(shipment['status']).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    _getStatusIcon(shipment['status']),
-                    color: _getStatusColor(shipment['status']),
-                    size: 20,
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        shipment['shipmentNo'],
-                        style: TextStyle(
-                          color: Color(0xFF2D3748),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        '${shipment['origin']} → ${shipment['destination']}',
-                        style: TextStyle(
-                          color: Color(0xFF718096),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(
-                          shipment['status'],
-                        ).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        _getStatusText(shipment['status']),
-                        style: TextStyle(
-                          color: _getStatusColor(shipment['status']),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      shipment['amount'],
-                      style: TextStyle(
-                        color: Color(0xFF2D3748),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Details
-          Container(
-            padding: EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Color(0xFFF7FAFC),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildDetailItem(
-                        'Yük Türü',
-                        shipment['cargoType'],
-                        Icons.inventory_2,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildDetailItem(
-                        'Ağırlık',
-                        shipment['weight'],
-                        Icons.scale,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildDetailItem(
-                        'Tarih',
-                        shipment['date'],
-                        Icons.calendar_today,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildDetailItem(
-                        'Taşıyıcı',
-                        shipment['carrier'],
-                        Icons.local_shipping,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        child: OutlinedButton(
-                          onPressed: () => _showShipmentDetails(shipment),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Color(0xFF2D3748),
-                            side: BorderSide(color: Color(0xFFE2E8F0)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                          ),
-                          child: Text('Detaylar'),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: () => _trackShipment(shipment),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF2D3748),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            shadowColor: Color(0xFF2D3748).withOpacity(0.3),
-                          ),
-                          child: Text('Takip Et'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailItem(String title, String value, IconData icon) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: Color(0xFF718096).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: Color(0xFF718096), size: 14),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Color(0xFF718096),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: Color(0xFF2D3748),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -1,10 +1,6 @@
 // account_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import '../providers/navigation_provider.dart';
-import '../providers/user_data_provider.dart';
-import '../components/custom_bottom_navigation.dart';
 
 class AccountScreen extends StatefulWidget {
   final String userName;
@@ -31,6 +27,8 @@ class _AccountScreenState extends State<AccountScreen>
   bool _emailNotifications = true;
   bool _smsNotifications = false;
   bool _darkMode = false;
+
+  int _selectedBottomNavIndex = 4;
 
   @override
   void initState() {
@@ -69,44 +67,36 @@ class _AccountScreenState extends State<AccountScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<NavigationProvider, UserDataProvider>(
-      builder: (context, navigationProvider, userDataProvider, child) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: SafeArea(
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: CustomScrollView(
-                  slivers: [
-                    _buildSliverAppBar(),
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          _buildProfileSection(),
-                          _buildAccountSection(),
-                          _buildNotificationSection(),
-                          _buildAppearanceSection(),
-                          _buildSecuritySection(),
-                          _buildSupportSection(),
-                          _buildDangerZone(),
-                          SizedBox(height: 100),
-                        ],
-                      ),
-                    ),
-                  ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SlideTransition(
+          position: _slideAnimation,
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: CustomScrollView(
+              slivers: [
+                _buildSliverAppBar(),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      _buildProfileSection(),
+                      _buildAccountSection(),
+                      _buildNotificationSection(),
+                      _buildAppearanceSection(),
+                      _buildSecuritySection(),
+                      _buildSupportSection(),
+                      _buildDangerZone(),
+                      SizedBox(height: 100),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-          bottomNavigationBar: CustomBottomNavigation(
-            selectedIndex: navigationProvider.selectedIndex,
-            onItemSelected: _handleBottomNavTap,
-            userType: widget.userType,
-          ),
-        );
-      },
+        ),
+      ),
+      bottomNavigationBar: _buildBottomNavigation(),
     );
   }
 
@@ -560,10 +550,14 @@ class _AccountScreenState extends State<AccountScreen>
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: Color(0xFF718096).withOpacity(0.1),
+                      color: (textColor ?? Color(0xFF718096)).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Icon(icon, color: Color(0xFF718096), size: 18),
+                    child: Icon(
+                      icon,
+                      color: textColor ?? Color(0xFF718096),
+                      size: 18,
+                    ),
                   ),
                   SizedBox(width: 16),
                   Expanded(
@@ -574,7 +568,7 @@ class _AccountScreenState extends State<AccountScreen>
                           title,
                           style: TextStyle(
                             color: textColor ?? Color(0xFF2D3748),
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -583,13 +577,28 @@ class _AccountScreenState extends State<AccountScreen>
                           subtitle,
                           style: TextStyle(
                             color: Color(0xFF718096),
-                            fontSize: 14,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  if (trailing != null) ...[SizedBox(width: 16), trailing],
+                  trailing ??
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF7FAFC),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Color(0xFFE2E8F0)),
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Color(0xFF718096),
+                          size: 12,
+                        ),
+                      ),
                 ],
               ),
             ),
@@ -636,14 +645,18 @@ class _AccountScreenState extends State<AccountScreen>
                       title,
                       style: TextStyle(
                         color: Color(0xFF2D3748),
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: TextStyle(color: Color(0xFF718096), fontSize: 14),
+                      style: TextStyle(
+                        color: Color(0xFF718096),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -651,7 +664,11 @@ class _AccountScreenState extends State<AccountScreen>
               Switch(
                 value: value,
                 onChanged: onChanged,
-                activeColor: Color(0xFF38A169),
+                activeColor: Color(0xFF2D3748),
+                activeTrackColor: Color(0xFF2D3748).withOpacity(0.3),
+                inactiveThumbColor: Color(0xFFE2E8F0),
+                inactiveTrackColor: Color(0xFFF7FAFC),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ],
           ),
@@ -665,46 +682,137 @@ class _AccountScreenState extends State<AccountScreen>
     );
   }
 
-  void _handleBottomNavTap(int index) {
-    final navigationProvider = Provider.of<NavigationProvider>(
-      context,
-      listen: false,
+  Widget _buildBottomNavigation() {
+    return Container(
+      height: 90,
+      decoration: BoxDecoration(
+        color: Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            offset: Offset(0, -5),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildNavItem(Icons.home_rounded, 0),
+            _buildNavItem(Icons.local_shipping_rounded, 1),
+            _buildNavItem(Icons.add_rounded, 2, isCenter: true),
+            _buildNavItem(Icons.receipt_rounded, 3),
+            _buildNavItem(Icons.person_rounded, 4),
+          ],
+        ),
+      ),
     );
-    navigationProvider.setIndex(index);
+  }
 
-    if (index != 4) {
-      // Don't navigate if already on account screen
-      Navigator.pushReplacementNamed(
-        context,
-        index == 0
-            ? '/dashboard'
-            : index == 1
-            ? (widget.userType == "Carrier" || widget.userType == "Driver"
-                ? '/jobs'
-                : '/shipments')
-            : index == 2
-            ? '/search'
-            : index == 3
-            ? (widget.userType == "Carrier"
-                ? '/vehicles'
-                : widget.userType == "Driver"
-                ? '/route'
-                : '/shipment-history')
-            : '/account',
+  Widget _buildNavItem(IconData icon, int index, {bool isCenter = false}) {
+    bool isSelected = _selectedBottomNavIndex == index;
+
+    if (isCenter) {
+      return GestureDetector(
+        onTap: () => _handleBottomNavTap(index),
+        child: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Icon(icon, color: Color(0xFF1A1A1A), size: 28),
+        ),
       );
+    }
+
+    return GestureDetector(
+      onTap: () => _handleBottomNavTap(index),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color:
+                    isSelected
+                        ? Colors.white.withOpacity(0.2)
+                        : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color:
+                    isSelected ? Colors.white : Colors.white.withOpacity(0.6),
+                size: 24,
+              ),
+            ),
+            if (isSelected)
+              Container(
+                margin: EdgeInsets.only(top: 4),
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleBottomNavTap(int index) {
+    setState(() {
+      _selectedBottomNavIndex = index;
+    });
+
+    switch (index) {
+      case 0: // Home
+        Navigator.pop(context);
+        break;
+      case 1: // Shipments
+        break;
+      case 2: // Create
+        break;
+      case 3: // Invoices
+        break;
+      case 4: // Account
+        // Already on account screen
+        break;
     }
   }
 
   String _getUserTypeLabel() {
     switch (widget.userType) {
-      case "Carrier":
-        return "Taşıyıcı";
-      case "Driver":
-        return "Sürücü";
-      case "Shipper":
-        return "Yükleyici";
+      case 'Shipper':
+        return 'Yük Sahibi';
+      case 'Carrier':
+        return 'Taşıyıcı';
+      case 'Driver':
+        return 'Sürücü';
       default:
-        return "Kullanıcı";
+        return 'Kullanıcı';
     }
   }
 
@@ -858,18 +966,6 @@ class _AccountScreenState extends State<AccountScreen>
   }
 
   // Navigation Methods
-  void _showComingSoon(String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature özelliği yakında geliyor!'),
-        backgroundColor: Color(0xFF2D3748),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: EdgeInsets.all(16),
-      ),
-    );
-  }
-
   void _navigateToPersonalInfo() => _showComingSoon('Kişisel Bilgiler');
   void _navigateToAddresses() => _showComingSoon('Adres Bilgileri');
   void _navigateToDocuments() => _showComingSoon('Belge Yönetimi');
@@ -888,4 +984,16 @@ class _AccountScreenState extends State<AccountScreen>
   void _navigateToLiveChat() => _showComingSoon('Canlı Destek');
   void _navigateToFeedback() => _showComingSoon('Geri Bildirim');
   void _navigateToAbout() => _showComingSoon('Hakkında');
+
+  void _showComingSoon(String feature) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$feature özelliği yakında geliyor!'),
+        backgroundColor: Color(0xFF2D3748),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(16),
+      ),
+    );
+  }
 }
