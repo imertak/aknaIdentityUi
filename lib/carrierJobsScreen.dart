@@ -1,5 +1,4 @@
 // carrier_jobs_screen.dart
-import 'package:akna_ui/shared/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class CarrierJobsScreen extends StatefulWidget {
@@ -975,14 +974,14 @@ class _CarrierJobsScreenState extends State<CarrierJobsScreen>
     return Container(
       height: 90,
       decoration: BoxDecoration(
-        color: Color(0xFF1A1A1A),
+        color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(25),
           topRight: Radius.circular(25),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.grey.withOpacity(0.2),
             blurRadius: 20,
             offset: Offset(0, -5),
           ),
@@ -1017,12 +1016,13 @@ class _CarrierJobsScreenState extends State<CarrierJobsScreen>
           width: 56,
           height: 56,
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: Color(0xFF2D3748),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.3),
-                blurRadius: 12,
+                color: Colors.grey.withOpacity(0.3),
+                blurRadius: 8,
+                spreadRadius: 2,
                 offset: Offset(0, 4),
               ),
             ],
@@ -1041,7 +1041,7 @@ class _CarrierJobsScreenState extends State<CarrierJobsScreen>
           children: [
             Icon(
               icon,
-              color: isSelected ? AppColors.primary : AppColors.textTertiary,
+              color: isSelected ? Color(0xFF2D3748) : Color(0xFF718096),
               size: 24,
             ),
             SizedBox(height: 4),
@@ -1050,7 +1050,7 @@ class _CarrierJobsScreenState extends State<CarrierJobsScreen>
               height: 4,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected ? AppColors.primary : Colors.transparent,
+                color: isSelected ? Color(0xFF2D3748) : Colors.transparent,
               ),
             ),
           ],

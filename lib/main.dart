@@ -15,10 +15,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Demo Uygulama',
-      home: MainDashboardScreen(
-        userType: "Carrier",
-        userName: "Mert",
-      ), // Ana ekran olarak MainDashboardScreen kullanılıyor
+      home: LoginScreen(),
+      //  MainDashboardScreen(
+      //   userType: "Carrier",
+      //   userName: "Mert",
+      // ),
     );
   }
 }
